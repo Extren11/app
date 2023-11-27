@@ -81,6 +81,7 @@ export class SupabaseService {
     crearlugar(lugar: any){
         return this._http.post<any>(this.supabaseUrl+'lugar',lugar, { headers: this.supabaseHeaders});
     }
+    
 
     getLugaresListaId(miVariable: string): Observable<any> {
         console.log('Valor id_list:', miVariable);
