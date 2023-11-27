@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Register</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  
+    <ion-item lines="full">
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input type="text" [(ngModel)]="userRegisterModal.nombre" required></ion-input>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label position="floating">Apellido</ion-label>
+      <ion-input type="text" [(ngModel)]="userRegisterModal.apellido" required></ion-input>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="text" [(ngModel)]="userRegisterModal.email" required></ion-input>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label position="floating">Clave</ion-label>
+      <ion-input type="password" [(ngModel)]="userRegisterModal.password" required></ion-input>
+    </ion-item>
+    <ion-row>
+      <ion-col>
+        <ion-button  (click)="bottonCrearUsuario()" type="submit" color="success" expand="block">Sign Up</ion-button>
+      </ion-col>
+    </ion-row>
+</ion-content>

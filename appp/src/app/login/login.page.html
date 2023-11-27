@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Log In</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-item lines="full">
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="text" [(ngModel)]="userLoginModal.email" required></ion-input>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label position="floating">Clave</ion-label>
+      <ion-input type="password" [(ngModel)]="userLoginModal.password" required></ion-input>
+    </ion-item>
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="userLogin(userLoginModal)" type="submit"  expand="block">Ingresar</ion-button>
+        <ion-button [routerLink]="['/forgot-password']" size="small" color="danger" expand="block">Recuperar Contraseña</ion-button>
+      </ion-col>
+    </ion-row>
+</ion-content>

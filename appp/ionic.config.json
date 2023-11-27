@@ -1,0 +1,8 @@
+{
+  "name": "InclusivMap",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "id": "e1b7e255"
+}

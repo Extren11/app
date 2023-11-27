@@ -1,0 +1,29 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Map
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Tab 2</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div id="map"></div>
+
+  <ion-item>
+    <ion-input placeholder="Ingrese la dirección en formato cordenadas" [(ngModel)]="direccion"></ion-input>
+    <ion-button (click)="buscarDireccion()">
+      <ion-icon name="search-outline"></ion-icon>
+    </ion-button>
+    
+    <ion-button (click)="agregarLugar()">
+      Guardar Lugar
+    </ion-button>
+  </ion-item>
+
+</ion-content>

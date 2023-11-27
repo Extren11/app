@@ -1,0 +1,27 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>{{ listaregister.nombre }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Lugares</ion-card-title>
+    <ion-button fill="clear" class="custom-button" (click)="agregarLugar()">
+      <ion-icon name="add-circle"></ion-icon>
+    </ion-button>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-item *ngFor="let lugar of lugaresFavoritos">
+        <ion-thumbnail slot="start">
+          <ion-icon size="large" name="person"></ion-icon>
+        </ion-thumbnail>
+        <ion-label>{{ lugar }}</ion-label>
+        <ion-button fill="clear" class="location" (click)="confirmarEliminarLugar(lugar)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

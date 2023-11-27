@@ -1,0 +1,68 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-list [inset]="true" *ngIf="userInfoReceived$ | async as ch">
+    <ion-title>{{ ch.nombre }}  {{ ch.apellido }}</ion-title>
+  </ion-list>
+  </ion-toolbar>
+</ion-header>
+
+<ion-card >
+  <ion-card-header>
+    <ion-card-title>Datos Personales</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list [inset]="true" *ngIf="userInfoReceived$ | async as ch">
+      <ion-item>
+        <ion-thumbnail slot="start">
+          <ion-icon size="large" name="person"></ion-icon>
+        </ion-thumbnail>
+        <ion-label>Telefono:{{ ch.telefono }}</ion-label>
+        <ion-label>Correo:{{ ch.email }} </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Ficha Médica</ion-card-title>
+    <ion-button fill="clear" class="custom-button" (click)="toggleEditing()">
+      <ion-icon name="pencil"></ion-icon>
+    </ion-button>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-item>
+        <ion-thumbnail slot="start">
+          <ion-icon size="large" name="medical"></ion-icon>
+        </ion-thumbnail>
+        <ion-label>
+          Ciego:
+          <ion-checkbox [(ngModel)]="ficharegister.ciego" [disabled]="!editing"></ion-checkbox>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-thumbnail slot="start">
+          <ion-icon size="large" name="medical"></ion-icon>
+        </ion-thumbnail>
+        <ion-label>
+          Movilidad Reducida:
+          <ion-checkbox [(ngModel)]="ficharegister.movilidadreducida" [disabled]="!editing"></ion-checkbox>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-thumbnail slot="start">
+          <ion-icon size="large" name="medical"></ion-icon>
+        </ion-thumbnail>
+        <ion-label>
+          TEA:
+          <ion-checkbox [(ngModel)]="ficharegister.tea" [disabled]="!editing"></ion-checkbox>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+<ion-button (click)="bottonEditFicha()" *ngIf="editing">Guardar</ion-button>
+
+
+
