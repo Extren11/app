@@ -3,9 +3,13 @@ import { Map, tileLayer, Marker, marker, LatLngTuple } from 'leaflet';
 import { SupabaseService } from '../services/supabase.service';
 import { SharedService } from '../services/shared.service';
 import { Geolocation } from '@capacitor/geolocation';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import 'leaflet-routing-machine';
 import * as L from 'leaflet';
+import { ListaModel } from '../models/ListaModel';
+import { LugarModel } from '../models/LugarModel';
+import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tab2',
@@ -21,13 +25,56 @@ export class Tab2Page {
   private routingControl: any;
   private marker: any;
 
+  userInfoReceived$: any;
+  lugaresFavoritos: string[] = [];
+  nombreLugar: string = '';
+
+  private _miVariable = new BehaviorSubject<string>('');
+  miVariable$ = this._miVariable.asObservable();
+  editing = false;
+  list: any = {};
+
+  lugarregister: LugarModel = {
+    id_list: '',
+    nombre: '',
+    cordenadas: '',
+    id_l: ''
+  };
+
+  listaregister: ListaModel = {
+    id_list: '',
+    nombre: '',
+    id: ''
+  };
+
   constructor(
-    private _supabaseService: SupabaseService,
     private sharedService: SharedService,
-    private alertController: AlertController
+    private navCtrl: NavController,
+    private alertController: AlertController,
+    private router: Router,
+    private _supabaseService: SupabaseService,
   ) {
     this.sharedService.miVariable$.subscribe((miVariable) => {
-      this.listaId = miVariable;
+      this.userInfoReceived$ = this._supabaseService.getUser(miVariable);
+
+      this._supabaseService.verificarLista(miVariable).subscribe((listafav) => {
+        if (listafav) {
+          this._supabaseService.getLista(miVariable).subscribe((list) => {
+            this.listaregister.nombre = list.nombre;
+          });
+        } else {
+          const list = {
+            id_list: miVariable,
+            nombre: 'favoritos',
+            id: miVariable
+          };
+
+          this._supabaseService.crearLista(list).subscribe((result) => {
+            console.log('Lista creada con éxito');
+            this.listaregister = list;
+          });
+        }
+      });
     });
   }
 
@@ -37,9 +84,20 @@ export class Tab2Page {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
-
     this.obtenerUbicacionActual();
-  }
+    // Obtén el ID de la lista actual, ya sea a través de un parámetro de ruta o de otra manera
+    this.sharedService.miVariable$.subscribe(miVariable => {
+      this.userInfoReceived$ = this._supabaseService.getUser(miVariable);
+      console.log('Valor de miVariable (id usuario) en Tab1Page:', miVariable);
+      if (miVariable) {
+        // Llama a la función en tu servicio para obtener los lugares de la lista por su ID
+        this._supabaseService.getLugaresListaId(miVariable).subscribe((lugares: LugarModel[]) => {
+          // Filtra los lugares para mostrar solo aquellos cuyo id_list coincida con el de la lista actual
+          this.lugaresFavoritos = lugares.filter(lugar => lugar.id_list === miVariable).map(lugar => lugar.nombre);
+      });
+    }
+  });
+}
 
   private async obtenerUbicacionActual(): Promise<void> {
     try {
@@ -93,97 +151,60 @@ export class Tab2Page {
     this.marker = marker(coordenadas).addTo(this.map);
   }
 
-  async agregarLugar(): Promise<void> {
-    if (!this.direccion) {
-      console.error('Por favor, ingrese una dirección.');
-      return;
-    }
-
-    const aliasPrompt = await this.alertController.create({
-      header: 'Guardar Lugar',
-      message: 'Ingrese un alias para este lugar:',
+  async agregarLugar() {
+    const alert = await this.alertController.create({
+      header: 'Agregar Lugar',
       inputs: [
         {
-          name: 'alias',
+          name: 'nombre',
           type: 'text',
-          placeholder: 'Alias'
+          placeholder: 'Nombre del lugar'
         }
       ],
       buttons: [
         {
           text: 'Cancelar',
-          role: 'cancel',
-          handler: () => {
-            console.log('Operación cancelada');
-          }
+          role: 'cancel'
         },
         {
-          text: 'Guardar',
-          handler: async (data) => {
-            if (data.alias) {
-              const coordenadas: LatLngTuple = this.direccion.split(',').map(Number) as LatLngTuple;
+          text: 'Agregar',
+          handler: (data: { cordenadas:string ,nombre: string }) => {
+            const nombreLugar = data.nombre;
+            if (nombreLugar) {
+              this.sharedService.miVariable$.subscribe((miVariable) => {
+                if (miVariable) {
+                  const lugar = {
+                    id_list: miVariable,
+                    nombre: nombreLugar,
+                    cordenadas : this.direccion
+                  };
 
-              if (this.validarCoordenadas(coordenadas)) {
-                this.centrarMapaYMostrarMarcador(coordenadas);
-                this.destino = coordenadas;
-                this.guardarLugarEnSupabase(coordenadas, data.alias);
-              } else {
-                console.error('Formato de coordenadas no válido.');
-              }
+                  this._supabaseService.crearlugar(lugar).subscribe(
+                    (data: any) => {
+                      console.log('Lugar guardado con éxito:', data);
+                      this.lugaresFavoritos.push(nombreLugar);
+                      this.router.navigate(['/tabs/tab3']);
+                      
+                    },
+                    (error) => {
+                      console.error('Error al guardar el lugar:', error);
+                    }
+                  );
+                } else {
+                  console.error('No se proporcionó un ID de usuario válido.');
+                }
+              });
             } else {
-              console.error('Alias no proporcionado.');
+              console.error('El nombre del lugar es obligatorio.');
             }
           }
         }
       ]
     });
 
-    await aliasPrompt.present();
+    await alert.present();
   }
 
-  private guardarLugarEnSupabase(coordenadas: LatLngTuple, alias: string): void {
-    if (!this.listaId) {
-      console.error('ID de lista no válido.');
-      return;
-    }
 
-    const lugar = {
-      id_list: this.listaId,
-      nombre: `${alias} (${coordenadas[0]}, ${coordenadas[1]})`,
-      coordenadas: `${coordenadas[0]}, ${coordenadas[1]}`
-    };
 
-    this._supabaseService.crearlugar(lugar).subscribe(
-      (data: any) => {
-        console.log('Lugar guardado con éxito:', data);
-      },
-      (error) => {
-        console.error('Error al guardar el lugar:', error);
-      }
-    );
-  }
-
-  buscarRuta(): void {
-    if (!this.destino || !this.direccion || !this.ubicacionActual) {
-      console.error('Por favor, seleccione un destino válido.');
-      return;
-    }
-
-    if (!this.routingControl) {
-      this.routingControl = (L as any).routing.control({
-        waypoints: [
-          (L as any).routing.waypoint([this.ubicacionActual[0], this.ubicacionActual[1]]),
-          (L as any).routing.waypoint([this.destino[0], this.destino[1]])
-        ],
-        routeWhileDragging: true
-      }).addTo(this.map);
-    } else {
-      if (this.routingControl) {
-        this.routingControl.setWaypoints([
-          (L as any).routing.waypoint([this.ubicacionActual[0], this.ubicacionActual[1]]),
-          (L as any).routing.waypoint([this.destino[0], this.destino[1]])
-        ]);
-      }
-    }
-  }
 }

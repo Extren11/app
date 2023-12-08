@@ -76,11 +76,13 @@ export class Tab1Page implements OnInit {
       });
   })
   }
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
 
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.getUserType();
-
   }
 
   async getUserType() {

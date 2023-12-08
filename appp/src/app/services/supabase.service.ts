@@ -64,7 +64,6 @@ export class SupabaseService {
     console.log('Valor id_list:', miVariable);
         return this._http.get<any>(this.supabaseUrl+'lista?id+eq.'+miVariable, { headers: this.supabaseHeaders}).pipe(
             map((data: any[]) => {
-    // Filtra los datos para obtener solo el registro con el ID deseado
               const usuarioEspecifico = data.find((usuario) => usuario.id === miVariable);
               console.log('Datos del usuario en cuestión lista :', usuarioEspecifico);
             return usuarioEspecifico;
