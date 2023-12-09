@@ -1,12 +1,12 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-list [inset]="true" *ngIf="userInfoReceived$ | async as ch">
-    <ion-title>{{ ch.nombre }}  {{ ch.apellido }}</ion-title>
-  </ion-list>
+      <ion-title>{{ ch.nombre }} {{ ch.apellido }}</ion-title>
+    </ion-list>
   </ion-toolbar>
 </ion-header>
 
-<ion-card >
+<ion-card>
   <ion-card-header>
     <ion-card-title>Datos Personales</ion-card-title>
   </ion-card-header>
@@ -16,12 +16,27 @@
         <ion-thumbnail slot="start">
           <ion-icon size="large" name="person"></ion-icon>
         </ion-thumbnail>
-        <ion-label>Telefono:{{ ch.telefono }}</ion-label>
-        <ion-label>Correo:{{ ch.email }} </ion-label>
+        <ion-label>Nombre: {{ ch.nombre }}</ion-label>
+        <ion-label>Apellido: {{ ch.apellido }}</ion-label>
+        <ion-label>Email: {{ ch.email }}</ion-label>
+      </ion-item>
+      <ion-item *ngIf="editing">
+        <ion-input placeholder="Nuevo nombre" [(ngModel)]="nuevosDatos.nombre"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="editing">
+        <ion-input placeholder="Nuevo apellido" [(ngModel)]="nuevosDatos.apellido"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="editing">
+        <ion-input placeholder="Nuevo email" [(ngModel)]="nuevosDatos.email"></ion-input>
       </ion-item>
     </ion-list>
+    <ion-button fill="clear" class="custom-button" (click)="toggleEditing()">
+      <ion-icon name="pencil"></ion-icon>
+    </ion-button>
+    <ion-button *ngIf="editing" (click)="editarDatosPersonales()">Guardar Cambios</ion-button>
   </ion-card-content>
 </ion-card>
+
 
 <ion-card>
   <ion-card-header>
@@ -37,7 +52,7 @@
           <ion-icon size="large" name="medical"></ion-icon>
         </ion-thumbnail>
         <ion-label>
-          Ciego:
+          Visibilidad Reducida
           <ion-checkbox [(ngModel)]="ficharegister.ciego" [disabled]="!editing"></ion-checkbox>
         </ion-label>
       </ion-item>
@@ -46,7 +61,7 @@
           <ion-icon size="large" name="medical"></ion-icon>
         </ion-thumbnail>
         <ion-label>
-          Movilidad Reducida:
+          Movilidad Reducida
           <ion-checkbox [(ngModel)]="ficharegister.movilidadreducida" [disabled]="!editing"></ion-checkbox>
         </ion-label>
       </ion-item>
@@ -55,7 +70,7 @@
           <ion-icon size="large" name="medical"></ion-icon>
         </ion-thumbnail>
         <ion-label>
-          TEA:
+          TEA
           <ion-checkbox [(ngModel)]="ficharegister.tea" [disabled]="!editing"></ion-checkbox>
         </ion-label>
       </ion-item>
