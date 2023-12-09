@@ -13,17 +13,22 @@
     </ion-toolbar>
   </ion-header>
 
-  <div id="map"></div>
+  <div #map id="map"></div>
 
   <ion-item>
-    <ion-input placeholder="Ingrese la dirección en formato cordenadas" [(ngModel)]="direccion"></ion-input>
-    <ion-button (click)="buscarDireccion()">
-      <ion-icon name="search-outline"></ion-icon>
-    </ion-button>
-    
-    <ion-button fill="clear" class="custom-button" (click)="agregarLugar()">
-      <ion-icon name="add-circle"></ion-icon>
-    </ion-button>
+    <ion-input placeholder="Ingrese coordenadas de inicio (latitud, longitud)" [(ngModel)]="ubicacionInicio"></ion-input>
   </ion-item>
+
+  <ion-item>
+    <ion-input placeholder="Ingrese coordenadas de destino (latitud, longitud)" [(ngModel)]="ubicacionDestino"></ion-input>
+  </ion-item>
+
+  <ion-button (click)="buscarRuta()">
+    Calcular Ruta
+  </ion-button>
+
+  <ion-button fill="clear" class="custom-button" (click)="agregarLugar()">
+    <ion-icon name="add-circle"></ion-icon>
+  </ion-button>
 
 </ion-content>

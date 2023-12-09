@@ -14,3 +14,16 @@ ion-item {
     left: 60px;
     z-index: 999; 
   }
+
+  ion-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  ion-button.location {
+    margin-right: 8px;
+  }
+  
+  ion-button.delete {
+    margin-left: 100px;  // Puedes ajustar este valor según tus necesidades
+  }

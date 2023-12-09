@@ -64,13 +64,20 @@ export class SupabaseService {
     console.log('Valor id_list:', miVariable);
         return this._http.get<any>(this.supabaseUrl+'lista?id+eq.'+miVariable, { headers: this.supabaseHeaders}).pipe(
             map((data: any[]) => {
+    // Filtra los datos para obtener solo el registro con el ID deseado
               const usuarioEspecifico = data.find((usuario) => usuario.id === miVariable);
               console.log('Datos del usuario en cuestión lista :', usuarioEspecifico);
             return usuarioEspecifico;
             })
         );
     }
-
+    
+    getDestino(idList: string, lugarNombre: string): Observable<string> {
+      console.log('valor lugar id :', idList);
+      return this._http.get<any>(this.supabaseUrl+'lista?id_list+eq.'+idList+ 'nombre?eq.'+lugarNombre, { headers: this.supabaseHeaders});
+    }
+    
+  
 
 
     crearLista(body: any){
@@ -161,4 +168,16 @@ export class SupabaseService {
           );
       }
       
+
+      editarDatosPersonales(id: string, nuevosDatos: any): Observable<any> {
+        console.log('Valor id:', id);
+        console.log('Valor nuevos datos:', nuevosDatos);
+        return this._http.patch(this.supabaseUrl + 'usuarios?id=eq.' + id, nuevosDatos, { headers: this.supabaseHeaders })
+          .pipe(
+            catchError((error: any) => {
+              console.error('Error al editar los datos personales:', error);
+              return throwError(error);
+            })
+          );
+      }
 }

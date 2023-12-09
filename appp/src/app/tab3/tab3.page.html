@@ -5,9 +5,6 @@
 </ion-header>
 
 <ion-card>
-  <ion-card-header>
-    <ion-card-title>Lugares</ion-card-title>
-  </ion-card-header>
   <ion-card-content>
     <ion-list>
       <ion-item *ngFor="let lugar of lugaresFavoritos">
@@ -15,10 +12,14 @@
           <ion-icon size="large" name="person"></ion-icon>
         </ion-thumbnail>
         <ion-label>{{ lugar }}</ion-label>
-        <ion-button fill="clear" class="location" (click)="confirmarEliminarLugar(lugar)">
+        <ion-button fill="clear" class="location" (click)="irAdestino(lugar)">
+          <ion-icon name="navigate"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" class="location delete" (click)="confirmarEliminarLugar(lugar)">
           <ion-icon name="trash"></ion-icon>
         </ion-button>
       </ion-item>
     </ion-list>
+    
   </ion-card-content>
 </ion-card>
